@@ -30,7 +30,7 @@ export function Report({ s, at }: { s: Specimen; at: number }) {
   const shareText =
     `Dissected ${s.symbol ? "$" + s.symbol : short(s.address)} 🔪\n\n` +
     `Verdict: ${LABEL[d.verdict].toUpperCase()} (threat ${d.threat}/100)\n` +
-    (lethal.length ? lethal.slice(0, 3).map((f) => `☠️ ${f.title}`).join("\n") : d.findings.filter((f) => f.level === "clean").slice(0, 3).map((f) => `✓ ${f.title}`).join("\n")) +
+    (lethal.length ? lethal.slice(0, 3).map((f) => `🔴 ${f.title}`).join("\n") : d.findings.filter((f) => f.level === "clean").slice(0, 3).map((f) => `✓ ${f.title}`).join("\n")) +
     `\n\nCut any contract open 👇`;
   const shareUrl = `https://x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(`${SITE_URL}/c/${s.address}`)}`;
   const named = s.functions.filter((f) => f.sig);

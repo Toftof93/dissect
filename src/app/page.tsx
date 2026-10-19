@@ -38,7 +38,7 @@ export default function Home() {
             <div className="organs-reveal">
               {ORGANS.map((o, i) => (
                 <code key={o.sig} className={o.bad ? "bad" : ""} style={{ animationDelay: `${1.6 + i * 0.25}s` }}>
-                  {o.bad ? "☠ " : "· "}
+                  <i className="mark" />
                   {o.sig}
                 </code>
               ))}
