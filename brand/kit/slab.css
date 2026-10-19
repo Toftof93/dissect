@@ -1,0 +1,20 @@
+.slab { position: absolute; }
+.slab .half { position: absolute; inset: 0; }
+.slab .face { position: absolute; inset: 0; background:
+  linear-gradient(150deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 38%),
+  linear-gradient(160deg, #2a2a2a 0%, #161616 55%, #0d0d0d 100%); }
+.slab .face::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px); }
+.slab .face .code { position: absolute; inset: 0; font: 500 13px/1.5 "GM", monospace; color: rgba(232,230,225,.07); word-break: break-all; padding: 14px; overflow: hidden; }
+.slab .rim { position: absolute; inset: 0; }
+.slab .L { clip-path: polygon(0 0, 60% 0, 36% 100%, 0 100%); transform: translate(-4.5%, 1.2%) rotate(-2.6deg); }
+.slab .R { clip-path: polygon(64% 0, 100% 0, 100% 100%, 40% 100%); transform: translate(4.5%, -1.2%) rotate(2.6deg); }
+.slab .R .face { background: linear-gradient(150deg, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 40%), linear-gradient(160deg, #1d1d1d 0%, #101010 60%, #090909 100%); }
+
+/* red light catching the cut edges */
+.slab .L .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(103deg, transparent 40%, rgba(255,70,50,.10) 50%, rgba(255,90,70,.55) 59.5%); }
+.slab .R .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(103deg, rgba(255,90,70,.55) 40.5%, rgba(255,70,50,.10) 50%, transparent 60%); }
+/* the glowing gap between the halves */
+.slab .wound { position: absolute; inset: -4% 0; clip-path: polygon(56% 0, 70% 0, 44% 100%, 30% 100%);
+  background: linear-gradient(103deg, transparent 42%, rgba(120,12,6,.35) 46%, rgba(255,61,46,.28) 49.3%, rgba(255,61,46,.28) 50.7%, rgba(120,12,6,.35) 54%, transparent 58%); }
+.slab .core { position: absolute; left: 50%; top: -6%; width: 2px; height: 112%; background: linear-gradient(rgba(255,61,46,0), #ff8a7a 14%, #fff4f1 50%, #ff8a7a 86%, rgba(255,61,46,0)); transform: translateX(-50%) rotate(13.2deg); box-shadow: 0 0 6px #ff6b5e, 0 0 18px #ff3d2e, 0 0 46px #ff3d2e, 0 0 110px rgba(255,61,46,.75); }
+.slab .bloom { position: absolute; inset: -55%; background: radial-gradient(closest-side, rgba(255,61,46,.30), rgba(255,61,46,.09) 50%, transparent 72%); }
