@@ -53,3 +53,9 @@ test("unnamed functions stop us from promising 'no mint'", () => {
   assert.equal(d.findings.find((x) => x.id === "nomint")?.level, "note");
   assert.equal(d.findings.find((x) => x.id === "mystery")?.level, "warn");
 });
+
+test("read-only names aren't painted as switches", async () => {
+  const { looksReadOnly } = await import("../src/lib/names.ts");
+  for (const s of ["GRADUATION_RESCUE_DELAY()", "launchEnabled()", "canLaunch(address)", "snipeTaxStartBps()", "getLaunchConfig(uint256)"]) assert.ok(looksReadOnly(s), s);
+  for (const s of ["setLaunchFee(uint256)", "rescueCurveFees(address)", "setWhitelistedLauncher(address,bool)"]) assert.ok(!looksReadOnly(s), s);
+});

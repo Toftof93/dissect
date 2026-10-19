@@ -1,9 +1,10 @@
 import "server-only";
-import { createPublicClient, getAddress, http, isAddress, parseAbiItem, decodeFunctionResult, type Address, type Hex } from "viem";
+import { createPublicClient, decodeFunctionResult, getAddress, http, isAddress, parseAbiItem, toFunctionSelector, toFunctionSignature, type Address, type Hex } from "viem";
 import { apiUrl, CHAIN_ID, RPC_URL } from "./chain";
 import { dissectBytecode, IMPL_SLOT, BEACON_SLOT, type Anatomy } from "./evm";
-import { BY_SELECTOR, type Organ } from "./signatures";
+import { BY_SELECTOR } from "./signatures";
 import { diagnose, type Diagnosis, type Fn } from "./diagnose";
+import { looksReadOnly, organFromName } from "./names";
 
 export type Specimen = {
   address: Address;
@@ -57,19 +58,7 @@ async function lookupSelectors(selectors: string[]): Promise<Record<string, stri
   return out;
 }
 
-// Guess what an unknown-to-us but publicly named function does from its name.
-function organFromName(sig: string): Organ | undefined {
-  const n = sig.split("(")[0].toLowerCase();
-  if (/mint/.test(n)) return "mint";
-  if (/(blacklist|bot|block|freeze|sniper)/.test(n)) return "blacklist";
-  if (/(tax|fee)/.test(n) && /^(set|update|change)/.test(n)) return "tax";
-  if (/(withdraw|rescue|recover|sweep|stuck|drain|emergency)/.test(n)) return "drain";
-  if (/(upgrade|implementation)/.test(n)) return "upgrade";
-  if (/(trading|pause|launch)/.test(n)) return "trading";
-  if (/max(tx|wallet|transaction)|limit|cooldown/.test(n)) return "limits";
-  if (/owner|role|admin/.test(n)) return "ownership";
-  return undefined;
-}
+type AbiItem = { type?: string; name?: string; inputs?: { type: string; components?: unknown[] }[]; stateMutability?: string };
 
 export async function dissect(input: string): Promise<DissectResult> {
   const raw = input.trim();
@@ -105,14 +94,28 @@ export async function dissect(input: string): Promise<DissectResult> {
     if (implCode && implCode !== "0x") anatomy = dissectBytecode(implCode);
   }
 
+  // A verified ABI says exactly which functions only read. Use it when we have it.
+  const fromAbi = new Map<string, { sig: string; view: boolean }>();
+  if (Array.isArray(sc?.abi) && !implementation) {
+    for (const item of sc.abi as AbiItem[]) {
+      if (item.type !== "function" || !item.name) continue;
+      try {
+        const selector = toFunctionSelector(item as Parameters<typeof toFunctionSelector>[0]);
+        const sig = toFunctionSignature(item as Parameters<typeof toFunctionSignature>[0]);
+        fromAbi.set(selector, { sig, view: item.stateMutability === "view" || item.stateMutability === "pure" });
+      } catch {}
+    }
+  }
+
   // Name every function we found.
-  const unknown = anatomy.selectors.filter((s) => !BY_SELECTOR.has(s));
+  const unknown = anatomy.selectors.filter((s) => !BY_SELECTOR.has(s) && !fromAbi.has(s));
   const looked = await lookupSelectors(unknown);
   const functions: Fn[] = anatomy.selectors.map((selector) => {
     const k = BY_SELECTOR.get(selector);
-    if (k) return { selector, sig: k.sig, organ: k.organ, says: k.says, known: true, view: Boolean(k.returns) };
-    const sig = looked[selector];
-    const view = sig ? /^(is|_is|has|get|view|check)/i.test(sig) : undefined;
+    const a = fromAbi.get(selector);
+    if (k) return { selector, sig: k.sig, organ: k.organ, says: k.says, known: true, view: a ? a.view : Boolean(k.returns) };
+    const sig = a?.sig ?? looked[selector];
+    const view = a ? a.view : sig ? looksReadOnly(sig) : undefined;
     return { selector, sig, organ: sig && !view ? organFromName(sig) : undefined, known: false, view };
   });
 

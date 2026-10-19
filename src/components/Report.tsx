@@ -118,7 +118,7 @@ export function Report({ s, at }: { s: Specimen; at: number }) {
             <li key={f.selector} className={f.organ && DANGER.has(f.organ) && !f.view ? "hot" : ""}>
               <code className="sel">{f.selector}</code>
               <code className="sig">{f.sig}</code>
-              {f.organ && <span className="tag">{ORGAN[f.organ]}</span>}
+              {f.view ? <span className="tag">read</span> : f.organ ? <span className="tag">{ORGAN[f.organ]}</span> : <span />}
             </li>
           ))}
           {mystery.map((f) => (
