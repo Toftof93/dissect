@@ -1,13 +1,5 @@
 import { DissectForm } from "@/components/DissectForm";
-
-const HEX = "6080604052600436106101f45760003560e01c806370a0823114610398578063715018a6146103ce5780638da5cb5b146103e357806395d89b4114610401578063a9059cbb1461041657806340c10f1914610436578063dd62ed3e1461045657";
-const ORGANS = [
-  { sig: "mint(address,uint256)", bad: true },
-  { sig: "setBots(address[],bool)", bad: true },
-  { sig: "setSellFee(uint256)", bad: true },
-  { sig: "transfer(address,uint256)", bad: false },
-  { sig: "0x8f2a6d1c  ???", bad: true },
-];
+import { OperatingTable } from "@/components/OperatingTable";
 
 const STEPS = [
   { t: "Extract", d: "We pull the raw bytecode straight from Robinhood Chain. Verified or not, every contract has it." },
@@ -33,25 +25,14 @@ export default function Home() {
           <p className="fine">Free · No wallet · Works on sealed contracts</p>
         </div>
 
-        <figure className="slab-hero" aria-hidden>
-          <div className="slab-inner">
-            <div className="organs-reveal">
-              {ORGANS.map((o, i) => (
-                <code key={o.sig} className={o.bad ? "bad" : ""} style={{ animationDelay: `${1.6 + i * 0.25}s` }}>
-                  <i className="mark" />
-                  {o.sig}
-                </code>
-              ))}
-            </div>
-            <div className="lid l"><span>{HEX.repeat(4)}</span></div>
-            <div className="lid r"><span>{HEX.repeat(4)}</span></div>
-            <div className="blade-line" />
-          </div>
-          <figcaption>
-            <span>SEALED SOURCE</span>
-            <span className="red">3 LETHAL · 1 MYSTERY</span>
-          </figcaption>
-        </figure>
+        <OperatingTable />
+      </section>
+
+      <section className="strip">
+        <div><b>Sealed</b><span>Works on contracts the dev never verified</span></div>
+        <div><b>180+</b><span>Known rug &amp; honeypot functions</span></div>
+        <div><b>Live</b><span>Owner, taxes &amp; limits read from chain</span></div>
+        <div><b>0</b><span>Wallets connected. Ever.</span></div>
       </section>
 
       <section className="how">
@@ -66,6 +47,29 @@ export default function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="sample">
+        <div className="sample-copy">
+          <p className="label">The autopsy</p>
+          <h2>One page. <em>Every secret.</em></h2>
+          <p className="lead">A verdict anyone can read in five seconds, every finding in plain English, and a card to share on X before your friends ape in.</p>
+        </div>
+        <div className="sample-card">
+          <div className="sc-head">
+            <span className="label">Verdict</span>
+            <span className="sc-sym">$HONEY</span>
+          </div>
+          <div className="sc-verdict">MALIGNANT.</div>
+          <div className="meter"><span style={{ width: "86%" }} /></div>
+          <p className="meter-label">Threat <b>86</b>/100</p>
+          <ul className="sc-rows">
+            <li className="lethal"><em>LETHAL</em>Blacklist · <code>setBots(address[],bool)</code></li>
+            <li className="lethal"><em>LETHAL</em>Adjustable tax · <code>setSellTax(uint256)</code></li>
+            <li className="warn"><em>WARNING</em>Checks tx.origin</li>
+            <li className="warn"><em>WARNING</em>2 mystery functions</li>
+          </ul>
+        </div>
       </section>
 
       <section className="lethal-list">

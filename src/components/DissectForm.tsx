@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+const EXAMPLES = [{ label: "Pons launchpad", ca: "0x7ed598bcef8bd9edd8c97a195c6d13f40801ec7e" }];
+
 export function DissectForm({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const [value, setValue] = useState("");
@@ -60,6 +62,16 @@ export function DissectForm({ compact = false }: { compact?: boolean }) {
         </button>
       </div>
       {error && <p className="cut-err">{error}</p>}
+      {!compact && (
+        <div className="examples">
+          <span>Try:</span>
+          {EXAMPLES.map((e) => (
+            <button key={e.ca} type="button" onClick={() => go(e.ca)}>
+              {e.label}
+            </button>
+          ))}
+        </div>
+      )}
     </form>
   );
 }
